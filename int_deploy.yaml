@@ -1,0 +1,47 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sysevent
+  labels:
+    app: sysevent
+  namespace: sysevent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sysevent
+  template:
+    metadata:
+      labels:
+        app: sysevent
+    spec:
+      containers:
+        - name: sysevent
+          image: marcelsysdig/sysevent
+          env:
+            - name: minsleep
+              value: "1800"
+            - name: maxsleep
+              value: "7200"
+            - name: pauseonstart
+              value: "false"
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: sysevent
+  name: sysevent
+  namespace: sysevent
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    name: sysevent
+    app: sysevent
+    role: sysevent
